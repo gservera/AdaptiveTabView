@@ -23,15 +23,15 @@ extension TitleImageProviding {
 
 // MARK: - Previews
 
-private struct PreviewExampleView: TitleImageProviding {
-    let title = "Settings"
-    let systemImageName = "person"
-    let id = TabIdentifier("PreviewExampleView")
-}
-
-struct TitleImageProviding_Previews: PreviewProvider {
-
-    static var previews: some View {
-        PreviewExampleView().label
-    }
-}
+//private struct PreviewExampleView: TitleImageProviding {
+//    let title = "Settings"
+//    let systemImageName = "person"
+//    let id = TabIdentifier("PreviewExampleView")
+//}
+//
+//struct TitleImageProviding_Previews: PreviewProvider {
+//
+//    static var previews: some View {
+//        PreviewExampleView().label
+//    }
+//}

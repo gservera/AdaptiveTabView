@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - TabIdentifier
 
-public struct TabIdentifier: Identifiable, Hashable, Equatable, ExpressibleByStringLiteral {
+public struct TabIdentifier: Identifiable, Hashable, Equatable, ExpressibleByStringLiteral, Sendable {
     public let id: String
 
     public init(_ id: String) {

@@ -1,4 +1,4 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 5.10
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,9 +6,9 @@ import PackageDescription
 let package = Package(
     name: "AdaptiveTabView",
     platforms: [
-        .macOS(.v13),
-        .iOS(.v16),
-        .tvOS(.v16),
+        .macOS(.v14),
+        .iOS(.v17),
+        .tvOS(.v17),
     ],
     products: [
         .library(
@@ -21,6 +21,9 @@ let package = Package(
     targets: [
         .target(
             name: "AdaptiveTabView",
-            dependencies: ["SequenceBuilder"])
+            dependencies: ["SequenceBuilder"],
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency")
+            ])
     ]
 )

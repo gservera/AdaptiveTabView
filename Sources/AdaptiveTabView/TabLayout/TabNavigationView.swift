@@ -10,13 +10,16 @@ import SwiftUI
 struct TabNavigationView<Content: TabContentView>: View {
 
     private let content: Content
+    
+    var path: Binding<NavigationPath>
 
-    init(@ViewBuilder contentBuidler: () -> Content) {
+    init(path: Binding<NavigationPath>, @ViewBuilder contentBuidler: () -> Content) {
         self.content = contentBuidler()
+        self.path = path
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack(path: path) {
             content
                 .navigationTitle(content.title)
         }
@@ -26,12 +29,14 @@ struct TabNavigationView<Content: TabContentView>: View {
     }
 }
 
-struct TabNavigationView_Previews: PreviewProvider {
-    static var previews: some View {
-        TabView {
-            TabNavigationView {
-                PreviewTitleImageProvidingView()
-            }
-        }
-    }
-}
+//#if DEBUG
+//#Preview("TabNavigationView_Previews") {
+//    @Previewable @State var path = NavigationPath()
+//    
+//    TabView {
+//        TabNavigationView(path: $path) {
+//            PreviewTitleImageProvidingView()
+//        }
+//    }
+//}
+//#endif

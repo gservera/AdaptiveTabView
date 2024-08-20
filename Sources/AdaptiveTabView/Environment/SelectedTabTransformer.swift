@@ -8,19 +8,19 @@
 import SwiftUI
 
 /// A struct meant to hold transformation logic for the selected tab when the ``AdaptiveTabView`` switches between different ``AdaptiveTabViewContainerKind``s.
-public struct SelectedTabTransformer {
+public struct SelectedTabTransformer : Sendable {
     /// A closure to use to transform ``TabIdentifier``s between the different ``AdaptiveTabViewContainerKind``s.
     /// - parameter toKind: The container kind that the ``AdaptiveTabView`` will transform into.
     /// - parameter tabIdentifier: The ``TabIdentifier`` currently selected in the previous ``AdaptiveTabViewContainerKind``.
-    public let transformer: (_ toKind: AdaptiveTabViewContainerKind, _ tabIdentifier: TabIdentifier) -> TabIdentifier
+    public let transformer: @Sendable (_ toKind: AdaptiveTabViewContainerKind, _ tabIdentifier: TabIdentifier) -> TabIdentifier
 
-    public init(transformer: @escaping (AdaptiveTabViewContainerKind, TabIdentifier) -> TabIdentifier) {
+    public init(transformer: @Sendable @escaping (AdaptiveTabViewContainerKind, TabIdentifier) -> TabIdentifier) {
         self.transformer = transformer
     }
 }
 
 extension SelectedTabTransformer: EnvironmentKey {
-    public static var defaultValue = SelectedTabTransformer { (sizeClass, tabIdentifier) in
+    public static let defaultValue = SelectedTabTransformer { (sizeClass, tabIdentifier) in
         return tabIdentifier
     }
 }

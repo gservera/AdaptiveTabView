@@ -56,16 +56,16 @@ struct SidebarView<TabContent: Sequence, SidebarExtraContent: View>: View where 
 
 // MARK: - Previews
 
-struct SidebarView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            SidebarView("AdaptiveTabView", selectedTab: nil) { (_) in
-                PreviewTitleImageProvidingView()
-            } sidebarExtraContent: {
-                Section("Other Content") {
-                    Text("Hello World")
-                }
-            }
-        }
-    }
-}
+//struct SidebarView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        NavigationView {
+//            SidebarView("AdaptiveTabView", selectedTab: nil) { (_) in
+//                PreviewTitleImageProvidingView()
+//            } sidebarExtraContent: {
+//                Section("Other Content") {
+//                    Text("Hello World")
+//                }
+//            }
+//        }
+//    }
+//}

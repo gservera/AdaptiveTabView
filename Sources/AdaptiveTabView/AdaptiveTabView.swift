@@ -11,7 +11,7 @@ import SequenceBuilder
 // MARK: - Enums
 
 /// The type of container currently being used by the ``AdaptiveTabView``.
-public enum AdaptiveTabViewContainerKind {
+public enum AdaptiveTabViewContainerKind: Sendable {
     /// The content is being displayed in a ``TabView``.
     case tabView
 
@@ -20,7 +20,7 @@ public enum AdaptiveTabViewContainerKind {
 }
 
 /// The kind of split view to use when in ``AdaptiveTabViewContainerKind.sidebarView``.
-public enum AdaptiveTabViewSplitViewKind {
+public enum AdaptiveTabViewSplitViewKind: Sendable {
     /// A split view with only 2 columns.
     case twoColumn
 
@@ -42,6 +42,7 @@ public struct AdaptiveTabView<TabContent: Sequence, SidebarExtraContent: View, D
     private let sidebarExtraContentBuilder: () -> SidebarExtraContent
 
     @Binding private var selectedTab: TabIdentifier
+    @Binding private var navigationPaths: [NavigationPath]
     @State private var selectedTabViewTab: TabIdentifier
     @State private var selectedSidebarViewTab: TabIdentifier
 
@@ -69,6 +70,7 @@ public struct AdaptiveTabView<TabContent: Sequence, SidebarExtraContent: View, D
     public init(
         appName: String,
         selectedTab: Binding<TabIdentifier>,
+        navigationPaths: Binding<[NavigationPath]>,
         splitViewKind: AdaptiveTabViewSplitViewKind = .threeColumn,
         columnVisibility: Binding<NavigationSplitViewVisibility>? = nil,
         @SequenceBuilder tabViews: @escaping (AdaptiveTabViewContainerKind) -> TabContent,
@@ -78,6 +80,7 @@ public struct AdaptiveTabView<TabContent: Sequence, SidebarExtraContent: View, D
     ) {
         self.appName = appName
         self._selectedTab = selectedTab
+        self._navigationPaths = navigationPaths
         self.splitViewKind = splitViewKind
         self.columnVisibilityBinding = columnVisibility
         self.tabViewBuilder = tabViews
@@ -97,12 +100,14 @@ public struct AdaptiveTabView<TabContent: Sequence, SidebarExtraContent: View, D
             case .compact:
                 TabLayoutView(
                     selectedTab: $selectedTabViewTab,
+                    navigationPaths: $navigationPaths,
                     tabViewBuilder
                 )
             default:
                 SidebarLayoutView(
                     appName,
                     selectedTab: $selectedSidebarViewTab,
+                    navigationPaths: $navigationPaths,
                     splitViewKind: splitViewKind,
                     columnVisibility: columnVisibilityBinding ?? $columnVisibilityState,
                     tabViewBuilder: tabViewBuilder,
@@ -112,9 +117,9 @@ public struct AdaptiveTabView<TabContent: Sequence, SidebarExtraContent: View, D
                 )
             }
         }
-        .onChange(of: horizontalSizeClass) { newValue in
+        .onChange(of: horizontalSizeClass, { oldValue, newValue in
             guard let containerKind = newValue?.containerKind else { return }
-
+            
             selectedTab = selectedTabTransformer.transformer(containerKind, selectedTab)
             switch containerKind {
             case .tabView:
@@ -122,8 +127,8 @@ public struct AdaptiveTabView<TabContent: Sequence, SidebarExtraContent: View, D
             case .sidebarView:
                 selectedSidebarViewTab = selectedTab
             }
-        }
-        .onChange(of: selectedTab) { newValue in
+        })
+        .onChange(of: selectedTab) { oldValue, newValue in
             switch horizontalSizeClass {
             case .compact:
                 guard selectedTabViewTab != newValue else { return }
@@ -133,11 +138,11 @@ public struct AdaptiveTabView<TabContent: Sequence, SidebarExtraContent: View, D
                 selectedSidebarViewTab = newValue
             }
         }
-        .onChange(of: selectedTabViewTab) { newValue in
+        .onChange(of: selectedTabViewTab) { oldValue, newValue in
             guard selectedTab != newValue else { return }
             selectedTab = newValue
         }
-        .onChange(of: selectedSidebarViewTab) { newValue in
+        .onChange(of: selectedSidebarViewTab) { oldValue, newValue in
             guard selectedTab != newValue else { return }
             selectedTab = newValue
         }
@@ -159,7 +164,7 @@ struct AdaptiveTabView_Previews: PreviewProvider {
     @State static private var selectedTab = TabIdentifier("PreviewTitleImageProvidingView")
 
     static var previews: some View {
-        AdaptiveTabView(appName: "AdaptiveTabView", selectedTab: $selectedTab) { (_) in
+        AdaptiveTabView(appName: "AdaptiveTabView", selectedTab: $selectedTab, navigationPaths: Binding(projectedValue: .constant([]))) { (_) in
             PreviewTitleImageProvidingView()
             PreviewTitleImageProvidingView()
             PreviewTitleImageProvidingView()
